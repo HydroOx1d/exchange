@@ -6,7 +6,7 @@ const adminSchema = new mongoose.Schema({
   phoneNumber: { type: String, required: true },
   licenseNumber: { type: String, required: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['admin', 'super-admin'], required: true }
+  role: { type: String, enum: ['admin', 'super-admin'], default: 'admin' }
 });
 
 const Admin = mongoose.model('Admin', adminSchema);

@@ -4,9 +4,19 @@ class ClientController {
   getClients(req, res) {
     Client.find({}, (err, clients) => {
       if (err) {
-        res.status(500).json({ error: 'Невозможно получить список клиентов' });
+        res.status(500).json({
+          resultCode: 1,
+          data: [
+            { 
+              message: 'Unable to get a list of clients' 
+            }
+          ]
+        });
       } else {
-        res.status(200).json(clients);
+        res.status(200).json({
+          resultCode: 0,
+          data: clients
+        });
       }
     });
   }
@@ -44,9 +54,19 @@ class ClientController {
 
     client.save((err) => {
       if (err) {
-        res.status(500).json({ error: 'Невозможно сохранить список клиентов' });
+        res.status(500).json({
+          resultCode: 1,
+          data: [
+            { message: 'Unable to save client list' }
+          ]
+        });
       } else {
-        res.status(201).json(client);
+        res.status(201).json({
+          resultCode: 0,
+          data: [
+            client
+          ]
+        });
       }
     });
   }

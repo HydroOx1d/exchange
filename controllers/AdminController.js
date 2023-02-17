@@ -5,17 +5,19 @@ const bcrypt = require('bcrypt')
 class AdminController {
   async createAdmin(req, res) {
     try {
-      const { companyName, website, phoneNumber, licenseNumber, password, role } = req.body;
-
-      // Проверка наличия всех полей
-      if (!companyName || !website || !phoneNumber || !licenseNumber || !password || !role) {
-        return res.status(400).json({ message: 'Пожалуйста, заполните все поля' });
-      }
+      const { companyName, website, phoneNumber, licenseNumber, password} = req.body;
 
       // Проверка существования администратора с таким же номером телефона
       const adminExists = await Admin.findOne({ phoneNumber });
       if (adminExists) {
-        return res.status(400).json({ message: 'Администратор с таким номером телефона уже зарегистрирован' });
+        return res.status(400).json({
+          resutlCode: 1,
+          data: [
+            {
+              message: "Admin is already registered"
+            }
+          ]
+        });
       }
 
       // Хэширование пароля
@@ -27,8 +29,7 @@ class AdminController {
         website,
         phoneNumber,
         licenseNumber,
-        password: hashedPassword,
-        role
+        password: hashedPassword
       });
 
       // Сохранение нового администратора в базе данных
@@ -37,35 +38,81 @@ class AdminController {
       // Генерация JWT токена для нового администратора
       const token = jwt.sign({ adminId: newAdmin._id }, process.env.JSONWEBTOKEN_SECRET_KEY, { expiresIn: '1h' });
 
-      return res.status(201).json({ message: 'Администратор успешно зарегистрирован', token });
+      return res.status(201).json({
+        resultCode: 0,
+        data: [
+          { 
+            message: 'Admin succesfully registered', 
+            token 
+          }
+        ]
+      });
 
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ message: 'Произошла ошибка при регистрации администратора' });
+      return res.status(500).json({
+        resultCode: 1,
+        data: [
+          {
+            message: 'An error occurred during administrator registration'
+          }
+        ]
+      });
     }
   }
 
   async loginAdmin(req, res) {
-    const { companyName, password } = req.body;
+    try {
+      const { companyName, password } = req.body;
 
-    const admin = await Admin.findOne({ companyName });
+      const admin = await Admin.findOne({ companyName });
 
-    if (!admin) {
-      return res.status(404).json({message: "Администратор не найден"})
+      if (!admin) {
+        return res.status(404).json({
+          resultCode: 1,
+          data: [
+            {
+              message: "Administrator not found"
+            }
+          ]
+        })
+      }
+
+      const isPasswordMatch = await bcrypt.compare(password, admin.password);
+
+      if (!isPasswordMatch) {
+        return res.status(400).json({
+          resultCode: 1,
+          data: [
+            {
+              message: "Incorrect company name or password"
+            }
+          ]
+        })
+      }
+
+      const token = jwt.sign({ adminId: admin._id }, process.env.JSONWEBTOKEN_SECRET_KEY, { expiresIn: '1h' });
+
+      res.json({
+        resultCode: 0,
+        data: [
+          {
+            message: "Successfully logged in",
+            token
+          }
+        ]
+      })
+    } catch(err) {
+      console.log(err);
+      res.status(500).json({
+        resultCode: 1,
+        data: [
+          {
+            message: "Authorization error"
+          }
+        ]
+      })
     }
-
-    const isPasswordMatch = await bcrypt.compare(password, admin.password);
-
-    if(!isPasswordMatch) {
-      return res.status(400).json({message: "Неправильное имя компании или пароль"})
-    }
-
-    const token = jwt.sign({ adminId: admin._id }, process.env.JSONWEBTOKEN_SECRET_KEY, { expiresIn: '1h' });
-
-    res.json({
-      message: "Успешно авторизован",
-      token
-    })
   }
 }
 
