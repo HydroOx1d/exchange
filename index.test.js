@@ -168,6 +168,25 @@ describe("should login admin and create client", () => {
     expect(res.body.data[0].exchangeMethod).toBe(clientData.exchangeMethod);
     expect(res.body.data[0].transactionAmount).toBe(clientData.transactionAmount);
     expect(res.body.data[0].transactionCurrency).toBe(clientData.transactionCurrency);
+
+    clientData['_id'] = res.body.data[0]._id
+    clientData['__v'] = res.body.data[0].__v
+  })
+
+  it("get client by id", async () => {
+    const res = await request(app).get('/clients/' + String(clientData._id));
+    
+    expect(res.status).toBe(200);
+    expect(res.body.resultCode).toBe(0)
+    expect(res.body.data[0]).toEqual(clientData)
+  })
+
+  it("get client by incorrect id", async () => {
+    const res = await request(app).get('/clients/2131245115315sadasfas')
+
+    expect(res.status).toBe(400);
+    expect(res.body.resultCode).toBe(1)
+    expect(res.body.data[0].message).toBe("Client id is invalid")
   })
 
   it("should return an array of clients where at least there is one client", async () => {
@@ -176,6 +195,10 @@ describe("should login admin and create client", () => {
     expect(res.status).toBe(200)
     expect(res.body.resultCode).toBe(0)
     expect(res.body.data.length).toBeGreaterThanOrEqual(1);
+  })
+
+  it("should create a deal", async () => {
+    
   })
 
   afterAll(async () => {

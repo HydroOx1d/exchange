@@ -1,4 +1,5 @@
 const Client = require('../model/Client.js');
+const { isValidObjectId } = require('mongoose')
 
 class ClientController {
   getClients(req, res) {
@@ -69,6 +70,53 @@ class ClientController {
         });
       }
     });
+  }
+
+  async getClient(req, res) {
+    try {
+      const id = req.params.id;
+
+      if(!isValidObjectId(id)) {
+        return res.status(400).json({
+          resultCode: 1,
+          data: [
+            {
+              message: "Client id is invalid"
+            }
+          ]
+        })
+      }
+
+      const admin = await Client.findById({_id: id})
+
+      if(!admin) {
+        return res.status(404).json({
+          resultCode: 1,
+          data: [
+            {
+              message: "Client not found"
+            }
+          ]
+        })
+      }
+
+      res.json({
+        resultCode: 0,
+        data: [
+          admin
+        ]
+      })
+    } catch(err) {
+      console.log(err)
+      res.status(500).json({
+        resultCode: 1,
+        data: [
+          {
+            message: "Unable to get the client"
+          }
+        ]
+      })
+    }
   }
 }
 

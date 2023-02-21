@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors')
 
 const ClientController = require('./controllers/ClientController.js');
 const AdminController = require('./controllers/AdminController.js');
@@ -21,9 +22,10 @@ mode && mongoose.connect(process.env.MONGODB_SERVER)
 const app = express();
 
 app.use(express.json());
-
+app.use(cors())
 
 app.get('/clients', ClientController.getClients);
+app.get('/clients/:id', ClientController.getClient)
 app.post('/clients', clientCreateValidation, handleValidation, checkAuth, ClientController.createClient);
 
 app.post('/admin/register', adminRegisterValidation, handleValidation, AdminController.createAdmin);
