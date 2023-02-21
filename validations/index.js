@@ -17,7 +17,7 @@ const clientCreateValidation = [
   body('currency').isString().notEmpty(),
   body('blockchainNetwork').isString().notEmpty(),
   body('volumes').isNumeric().notEmpty(),
-  body('paymentHistory').isArray({ min: 1 }),
+  body('paymentHistory').isArray(),
   body('exchangeMethod').isIn(['cash', 'non-cash']).notEmpty(),
   body('transactionAmount').isNumeric().notEmpty(),
   body('transactionCurrency').isIn(['USD', 'KGS']).notEmpty(),

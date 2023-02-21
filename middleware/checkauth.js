@@ -15,15 +15,17 @@ const checkAuth = (req, res, next) => {
       console.log(err)
       res.status(404).json({
         resultCode: 1,
-        success: false,
-        message: "У Вас нет прав"
+        data: [
+          { message: "You don't have rights" }
+        ]
       })
     }
   } else {
     res.status(403).json({
       resultCode: 1,
-      success: false,
-      message: "У Вас нет прав"
+      data: [
+        { message: "You don't have rights" }
+      ]
     })
   }
 }
