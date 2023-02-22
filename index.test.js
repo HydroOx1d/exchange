@@ -199,8 +199,17 @@ describe("should login admin and create client", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.resultCode).toBe(0)
+    expect(res.body.data[0].paymentHistory[0]).toEqual({ ...dealData, _id: res.body.data[0].paymentHistory[0]._id, __v: res.body.data[0].paymentHistory[0].__v })
+  })
 
-    console.log(res.body.data[0].paymentHistory)
+  it("should create a deal without some property", async () => {
+    const {blockchainNetwork, ...dealWithoutSomeProperty} = dealData
+    const res = await request(app).post('/clients/' + clientData._id + '/deal').set('Authorization', loginToken).send(dealWithoutSomeProperty);
+
+    expect(res.status).toBe(400)
+    expect(res.body.resultCode).toBe(1)
+    expect(res.body.data.errors.length).toBeGreaterThan(0)
+
 
   })
 
