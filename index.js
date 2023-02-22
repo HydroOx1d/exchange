@@ -10,7 +10,7 @@ const AdminController = require('./controllers/AdminController.js');
 const checkAuth = require('./middleware/checkauth.js');
 const { handleValidation } = require('./middleware/handleValidation.js')
 
-const { adminRegisterValidation, clientCreateValidation } = require('./validations/index.js')
+const { adminRegisterValidation, clientCreateValidation, createClientsDeal } = require('./validations/index.js')
 
 const mode = process.env.mode === 'development'
 
@@ -27,6 +27,7 @@ app.use(cors())
 app.get('/clients', ClientController.getClients);
 app.get('/clients/:id', ClientController.getClient)
 app.post('/clients', clientCreateValidation, handleValidation, checkAuth, ClientController.createClient);
+app.post('/clients/:id/deal', createClientsDeal, handleValidation, checkAuth, ClientController.createDeal)
 
 app.post('/admin/register', adminRegisterValidation, handleValidation, AdminController.createAdmin);
 app.post('/admin/login', AdminController.loginAdmin);

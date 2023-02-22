@@ -68,13 +68,15 @@ describe("should login admin and create client", () => {
     phoneNumber: '1231234412',
     personType: 'legal',
     cryptoWallet: '0x11245414124124124124124124',
-    currency: 'USDT',
-    blockchainNetwork: 'BSC',
-    volumes: 41212412,
-    paymentHistory: [],
-    exchangeMethod: 'cash',
-    transactionAmount: 123123,
-    transactionCurrency: 'KGS'
+    volumes: 41212412
+  }
+
+  let dealData = {
+    transactionCurrency: "USD",
+    currency: "BTC",
+    blockchainNetwork: "BSC",
+    transactionAmount: 24100,
+    exchangeMethod: "cash"
   }
 
   let loginToken;
@@ -161,13 +163,8 @@ describe("should login admin and create client", () => {
     expect(res.body.data[0].phoneNumber).toBe(clientData.phoneNumber);
     expect(res.body.data[0].personType).toBe(clientData.personType);
     expect(res.body.data[0].cryptoWallet).toBe(clientData.cryptoWallet);
-    expect(res.body.data[0].currency).toBe(clientData.currency);
-    expect(res.body.data[0].blockchainNetwork).toBe(clientData.blockchainNetwork);
     expect(res.body.data[0].volumes).toBe(clientData.volumes);
-    expect(res.body.data[0].paymentHistory).toEqual(clientData.paymentHistory);
-    expect(res.body.data[0].exchangeMethod).toBe(clientData.exchangeMethod);
-    expect(res.body.data[0].transactionAmount).toBe(clientData.transactionAmount);
-    expect(res.body.data[0].transactionCurrency).toBe(clientData.transactionCurrency);
+    expect(res.body.data[0].paymentHistory).toEqual([])
 
     clientData['_id'] = res.body.data[0]._id
     clientData['__v'] = res.body.data[0].__v
@@ -178,7 +175,7 @@ describe("should login admin and create client", () => {
     
     expect(res.status).toBe(200);
     expect(res.body.resultCode).toBe(0)
-    expect(res.body.data[0]).toEqual(clientData)
+    expect(res.body.data[0]).toEqual({ ...clientData, paymentHistory: []})
   })
 
   it("get client by incorrect id", async () => {
@@ -197,8 +194,14 @@ describe("should login admin and create client", () => {
     expect(res.body.data.length).toBeGreaterThanOrEqual(1);
   })
 
-  it("should create a deal", async () => {
-    
+  it("should create a deal with correct property", async () => {
+    const res = await request(app).post('/clients/' + clientData._id + '/deal').set('Authorization', loginToken).send(dealData);
+
+    expect(res.status).toBe(200);
+    expect(res.body.resultCode).toBe(0)
+
+    console.log(res.body.data[0].paymentHistory)
+
   })
 
   afterAll(async () => {

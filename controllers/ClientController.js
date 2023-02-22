@@ -1,4 +1,5 @@
 const Client = require('../model/Client.js');
+const Deal = require('../model/Deal.js');
 const { isValidObjectId } = require('mongoose')
 
 class ClientController {
@@ -29,13 +30,7 @@ class ClientController {
       phoneNumber,
       personType,
       cryptoWallet,
-      currency,
-      blockchainNetwork,
-      volumes,
-      paymentHistory,
-      exchangeMethod,
-      transactionAmount,
-      transactionCurrency
+      volumes
     } = req.body;
 
     const client = new Client({
@@ -44,13 +39,7 @@ class ClientController {
       phoneNumber,
       personType,
       cryptoWallet,
-      currency,
-      blockchainNetwork,
-      volumes,
-      paymentHistory,
-      exchangeMethod,
-      transactionAmount,
-      transactionCurrency
+      volumes
     });
 
     client.save((err) => {
@@ -113,6 +102,63 @@ class ClientController {
         data: [
           {
             message: "Unable to get the client"
+          }
+        ]
+      })
+    }
+  }
+
+  createDeal(req, res) {
+    try {
+      const id = req.params.id;
+
+      const deal = new Deal({
+        blockchainNetwork: req.body.blockchainNetwork,
+        currency: req.body.currency,
+        exchangeMethod: req.body.exchangeMethod,
+        transactionAmount: req.body.transactionAmount,
+        transactionCurrency: req.body.transactionCurrency
+      })
+
+      Client.findByIdAndUpdate({_id: id}, {$push: {paymentHistory: deal}}, {returnDocument: "after"}, (err, doc) => {
+        if(err) {
+          return res.status(400).json({
+            resultCode: 1,
+            data: [
+              {
+                message: "Unable to create a deal"
+              }
+            ]
+          })
+        }
+
+        if(!doc) {
+          return res.status(404).json({
+            resultCode: 1,
+            data: [
+              {
+                message: "The deal is not defined"
+              }
+            ]
+          })
+        }
+
+        res.json({
+          resultCode: 0,
+          data: [
+            doc
+          ]
+        })
+      });
+
+      
+    } catch(err) {
+      console.log(err);
+      res.status(500).json({
+        resultCode: 1,
+        data: [
+          {
+            message: "Unable to create a deal"
           }
         ]
       })

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env mode=development node index.js",
-    "start": "cross-env mode=notdevelopment nodemon index.js",
+    "dev": "cross-env mode=development nodemon index.js",
+    "start": "cross-env mode=notdevelopment node index.js",
     "test": "cross-env mode=notdevelopment jest index.test.js"
   },
   "author": "HydroOx1d",
