@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const app = require('./index.js');
 const Client = require('./model/Client.js');
 const Admin = require('./model/Admin.js')
-const bcrypt = require('bcrypt')
 
 describe("create admin", () => {
   let data = {
@@ -15,7 +14,7 @@ describe("create admin", () => {
   }
 
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_SERVER)
+    await mongoose.connect(process.env.MONGODB_SERVER_TESTING)
   })
 
   it("create admin", async () => {
@@ -82,7 +81,7 @@ describe("should login admin and create client", () => {
   let loginToken;
 
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_SERVER)
+    await mongoose.connect(process.env.MONGODB_SERVER_TESTING)
   })
 
   it("create admin", async () => {
@@ -209,8 +208,6 @@ describe("should login admin and create client", () => {
     expect(res.status).toBe(400)
     expect(res.body.resultCode).toBe(1)
     expect(res.body.data.errors.length).toBeGreaterThan(0)
-
-
   })
 
   afterAll(async () => {

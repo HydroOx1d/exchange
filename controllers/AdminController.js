@@ -33,7 +33,7 @@ class AdminController {
       });
 
       // Сохранение нового администратора в базе данных
-      await newAdmin.save();
+      const acc = await newAdmin.save();
 
       // Генерация JWT токена для нового администратора
       const token = jwt.sign({ adminId: newAdmin._id }, process.env.JSONWEBTOKEN_SECRET_KEY, { expiresIn: '1h' });
@@ -43,7 +43,8 @@ class AdminController {
         data: [
           { 
             message: 'Admin succesfully registered', 
-            token 
+            token,
+            acc
           }
         ]
       });
@@ -98,7 +99,8 @@ class AdminController {
         data: [
           {
             message: "Successfully logged in",
-            token
+            token,
+            admin
           }
         ]
       })
