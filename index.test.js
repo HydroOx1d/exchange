@@ -122,6 +122,14 @@ describe("should login admin and create client", () => {
     expect(res.body.data[0].message).toBe("Administrator not found")
   })
 
+  it("check auth before login", async () => {
+    const res = await request(app).get('/admin/me').set('Authorization', loginToken)
+
+    expect(res.status).toBe(200)
+    expect(res.body.resultCode).toBe(0)
+    expect(res.body.data[0].companyName).toBe(createAdminData.companyName)
+  })
+
   it("get client not created yet", async () => {
     const res = await request(app).get('/clients');
 
@@ -133,7 +141,6 @@ describe("should login admin and create client", () => {
   it("create client without token for creating client", async () => {
     const res = await request(app).post('/clients').send(clientData)
 
-    // console.log(res.request.header)
     expect(res.status).toBe(403);
     expect(res.body.resultCode).toBe(1)
     expect(res.body.data[0].message).toBe("You don't have rights")
@@ -166,7 +173,6 @@ describe("should login admin and create client", () => {
     expect(res.body.data[0].paymentHistory).toEqual([])
 
     clientData['_id'] = res.body.data[0]._id
-    clientData['__v'] = res.body.data[0].__v
   })
 
   it("get client by id", async () => {
@@ -198,7 +204,7 @@ describe("should login admin and create client", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.resultCode).toBe(0)
-    expect(res.body.data[0].paymentHistory[0]).toEqual({ ...dealData, _id: res.body.data[0].paymentHistory[0]._id, __v: res.body.data[0].paymentHistory[0].__v })
+    expect(res.body.data[0].paymentHistory[0]).toEqual({ ...dealData, _id: res.body.data[0].paymentHistory[0]._id})
   })
 
   it("should create a deal without some property", async () => {

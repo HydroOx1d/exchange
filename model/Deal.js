@@ -7,7 +7,8 @@ const dealSchema = new mongoose.Schema({
   transactionAmount: { type: Number, required: true },
   exchangeMethod: { type: String, enum: ['cash', 'non-cash'], required: true }
 }, {
-  timestamps: true
+  timestamps: true,
+  versionKey: false
 });
 
 const Deal = mongoose.model('Deal', dealSchema);

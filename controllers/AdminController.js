@@ -33,7 +33,7 @@ class AdminController {
       });
 
       // Сохранение нового администратора в базе данных
-      const acc = await newAdmin.save();
+      const admin = await newAdmin.save();
 
       // Генерация JWT токена для нового администратора
       const token = jwt.sign({ adminId: newAdmin._id }, process.env.JSONWEBTOKEN_SECRET_KEY, { expiresIn: '1h' });
@@ -44,7 +44,7 @@ class AdminController {
           { 
             message: 'Admin succesfully registered', 
             token,
-            acc
+            admin
           }
         ]
       });
@@ -111,6 +111,40 @@ class AdminController {
         data: [
           {
             message: "Authorization error"
+          }
+        ]
+      })
+    }
+  }
+
+  async getMe(req, res) {
+    try {
+      const admin = await Admin.findById({_id: req.adminId});
+
+      if(!admin) {
+        return res.status(404).json({
+          resultCode: 1,
+          data: [
+            {
+              message: "Admin is not defined"
+            }
+          ]
+        })
+      }
+
+      res.json({
+        resultCode: 0,
+        data: [
+          admin
+        ]
+      })
+    } catch(err) {
+      console.log(err)
+      res.status(500).json({
+        resultCode: 1,
+        data: [
+          {
+            message: "Unable to get admin"
           }
         ]
       })

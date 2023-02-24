@@ -31,6 +31,7 @@ app.post('/clients/:id/deal', createClientsDeal, handleValidation, checkAuth, Cl
 
 app.post('/admin/register', adminRegisterValidation, handleValidation, AdminController.createAdmin);
 app.post('/admin/login', AdminController.loginAdmin);
+app.get('/admin/me', checkAuth, AdminController.getMe)
 
 if(mode) {
   console.log(mode)

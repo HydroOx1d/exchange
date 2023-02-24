@@ -8,6 +8,8 @@ const clientSchema = new mongoose.Schema({
   cryptoWallet: { type: String, required: true },
   volumes: { type: Number, required: true },
   paymentHistory: { type: Array, default: []}
+}, {
+  versionKey: false
 });
 
 const Client = mongoose.model('Client', clientSchema);
