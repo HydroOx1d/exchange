@@ -7,7 +7,13 @@ const clientSchema = new mongoose.Schema({
   personType: { type: String, enum: ['physical', 'legal'], required: true },
   cryptoWallet: { type: String, required: true },
   volumes: { type: Number, required: true },
-  paymentHistory: { type: Array, default: []}
+  paymentHistory: { type: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Deal",
+      required: true
+    }
+  ], default: []}
 }, {
   versionKey: false
 });
@@ -15,19 +21,3 @@ const clientSchema = new mongoose.Schema({
 const Client = mongoose.model('Client', clientSchema);
 
 module.exports = Client;
-
-
-/* 
-
-
-  transactionCurrency: { type: String, enum: ['USD', 'KGS'], required: true }
-
-currency: { type: String, required: true },
-  blockchainNetwork: { type: String, required: true },
-
-
-  transactionAmount: { type: Number, required: true },
-  exchangeMethod: { type: String, enum: ['cash', 'non-cash'], required: true },
-  cryptoWallet: { type: String, required: true },
-
-*/

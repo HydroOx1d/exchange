@@ -202,9 +202,31 @@ describe("should login admin and create client", () => {
   it("should create a deal with correct property", async () => {
     const res = await request(app).post('/clients/' + clientData._id + '/deal').set('Authorization', loginToken).send(dealData);
 
+    dealData['_id'] = res.body.data[0].paymentHistory[0]._id
+    dealData['createdAt'] = res.body.data[0].paymentHistory[0].createdAt
+    dealData['updatedAt'] = res.body.data[0].paymentHistory[0].updatedAt
+
     expect(res.status).toBe(200);
     expect(res.body.resultCode).toBe(0)
-    expect(res.body.data[0].paymentHistory[0]).toEqual({ ...dealData, _id: res.body.data[0].paymentHistory[0]._id})
+    expect(res.body.data[0].paymentHistory[0]).toEqual({ ...dealData })
+  })
+
+  it("should update a deal", async () => {
+    const changedDealData = { ...dealData, transactionCurrency: "KGS" }
+    const res = await request(app).patch('/clients/' + clientData._id + '/deal/' + dealData._id).set('Authorization', loginToken).send(changedDealData)
+
+    expect(res.status).toBe(200)
+    expect(res.body.resultCode).toBe(0)
+
+    expect(res.body.data[0]).toEqual({ ...changedDealData , updatedAt: res.body.data[0].updatedAt})
+  })
+
+  it("should delete a deal", async () => {
+    const res = await request(app).delete('/clients/' + clientData._id + '/deal/' + dealData._id).set('Authorization', loginToken)
+
+    expect(res.status).toBe(200)
+    expect(res.body.resultCode).toBe(0)
+    expect(res.body.data[0]._id).toBe(dealData._id)
   })
 
   it("should create a deal without some property", async () => {
@@ -214,6 +236,23 @@ describe("should login admin and create client", () => {
     expect(res.status).toBe(400)
     expect(res.body.resultCode).toBe(1)
     expect(res.body.data.errors.length).toBeGreaterThan(0)
+  })
+
+  it("should update the client", async () => {
+    const changeClientData = {...clientData, firstName: "Blabla"}
+    const res = await request(app).patch('/clients/' + clientData._id).set("Authorization", loginToken).send(changeClientData)
+
+    expect(res.status).toBe(200)
+    expect(res.body.resultCode).toBe(0)
+    expect(res.body.data[0]).toEqual({ ...changeClientData, paymentHistory: []})
+  })
+
+  it("should delete a client", async () => {
+    const res = await request(app).delete('/clients/' + clientData._id).set('Authorization', loginToken)
+
+    expect(res.status).toBe(200)
+    expect(res.body.resultCode).toBe(0)
+    expect(res.body.data[0]._id).toBe(clientData._id)
   })
 
   afterAll(async () => {

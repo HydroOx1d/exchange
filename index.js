@@ -27,7 +27,12 @@ app.use(cors())
 app.get('/clients', ClientController.getClients);
 app.get('/clients/:id', ClientController.getClient)
 app.post('/clients', clientCreateValidation, handleValidation, checkAuth, ClientController.createClient);
+app.delete('/clients/:id', checkAuth, ClientController.deleteClient)
+app.patch('/clients/:id', clientCreateValidation, handleValidation, checkAuth, ClientController.updateClient)
+
 app.post('/clients/:id/deal', createClientsDeal, handleValidation, checkAuth, ClientController.createDeal)
+app.patch('/clients/:id/deal/:dealId', createClientsDeal, handleValidation, checkAuth, ClientController.updateDeal)
+app.delete('/clients/:id/deal/:dealId', checkAuth, ClientController.deleteDeal)
 
 app.post('/admin/register', adminRegisterValidation, handleValidation, AdminController.createAdmin);
 app.post('/admin/login', AdminController.loginAdmin);
