@@ -256,6 +256,17 @@ class ClientController {
     try {
       const id = req.params.id;
 
+      if (!isValidObjectId(id)) {
+        return res.status(400).json({
+          resultCode: 1,
+          data: [
+            {
+              message: "Client id is invalid"
+            }
+          ]
+        })
+      }
+
       const deal = new Deal({
         blockchainNetwork: req.body.blockchainNetwork,
         currency: req.body.currency,
@@ -268,6 +279,7 @@ class ClientController {
 
       Client.findByIdAndUpdate({_id: id}, {$push: {paymentHistory: deal._id}}, {returnDocument: "after"}, (err, doc) => {
         if(err) {
+          console.log(err)
           return res.status(400).json({
             resultCode: 1,
             data: [
